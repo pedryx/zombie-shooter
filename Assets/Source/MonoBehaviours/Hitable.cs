@@ -71,8 +71,9 @@ public class Hitable : MonoBehaviour
         CurrentHealth--;
         OnHealthChange?.Invoke(this, new HealthChangeEventArgs(CurrentHealth));
 
-        if (CurrentHealth == 0)
+        if (CurrentHealth <= 0)
         {
+            Destroy(gameObject);
             //todo: game exit
             //UnityEngine.Application.Quit();
         }
