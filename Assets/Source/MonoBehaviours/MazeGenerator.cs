@@ -28,6 +28,7 @@ public class MazeGenerator : MonoBehaviour
     /// Last state of F1 key.
     /// </summary>
     private bool last = false;
+    private GameObject graph;
 #endif
 
     public Transform Player;
@@ -149,6 +150,9 @@ public class MazeGenerator : MonoBehaviour
     {
         yield return new WaitForFixedUpdate();
 
+        graph = new GameObject();
+        graph.transform.position = Vector3.zero;
+
         for (int i = 0; i < Width; i++)
         {
             for (int j = 0; j < Height; j++)
@@ -170,6 +174,7 @@ public class MazeGenerator : MonoBehaviour
 
 #if DEBUG_G
         var circle = Instantiate(DebugCirclePrefab);
+        circle.transform.parent = graph.transform;
         circle.transform.position = pos;
         circle.SetActive(false);
 
@@ -187,6 +192,7 @@ public class MazeGenerator : MonoBehaviour
     private void CreateEdge(Vector2 start, Vector2 end)
     {
         var line = new GameObject();
+        line.transform.parent = graph.transform;
         line.transform.position = start;
         line.AddComponent<LineRenderer>();
 
