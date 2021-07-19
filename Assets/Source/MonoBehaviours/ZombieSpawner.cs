@@ -14,6 +14,8 @@ public class ZombieSpawner : MonoBehaviour
 
     public GameObject ZombiePrefab;
     public MazeGenerator Maze;
+    public GameObject RewardPicker;
+    public Gunner Gunner;
 
     /// <summary>
     /// Current wave number.
@@ -122,7 +124,11 @@ public class ZombieSpawner : MonoBehaviour
     {
         ReamingZombies--;
         if (ReamingZombies <= 0)
+        {
+            Gunner.enabled = false;
+            RewardPicker.SetActive(true);
             SpawnNextWave();
+        }
 
         OnZombieCountChange?.Invoke(this, new EventArgs());
     }

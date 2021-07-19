@@ -4,7 +4,7 @@
 /// <summary>
 /// Adds firing capability to game object.
 /// </summary>
-class Gunner : MonoBehaviour
+public class Gunner : MonoBehaviour
 {
 
     /// <summary>
@@ -29,7 +29,7 @@ class Gunner : MonoBehaviour
     {
         ellapsed += Time.deltaTime;
 
-        if (Input.GetMouseButtonDown(0) && ellapsed >= 1 / FireRate)
+        if (Input.GetMouseButton(0) && ellapsed >= 1 / FireRate)
         {
             Vector2 center = new Vector2(Screen.width / 2, Screen.height / 2);
             Vector2 direction = ((Vector2)Input.mousePosition - center).normalized;
