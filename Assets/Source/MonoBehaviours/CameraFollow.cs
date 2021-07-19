@@ -9,14 +9,14 @@ public class CameraFollow : MonoBehaviour
     /// <summary>
     /// Target entity which will be followed by a camera.
     /// </summary>
-    public Transform target;
+    public Transform Target;
 
     void LateUpdate()
     {
         transform.position = new Vector3()
         {
-            x = target.position.x,
-            y = target.position.y,
+            x = Target.position.x,
+            y = Target.position.y,
             z = transform.position.z
         };
     }

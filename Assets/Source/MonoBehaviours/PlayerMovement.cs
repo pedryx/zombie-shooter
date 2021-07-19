@@ -29,12 +29,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Vector2 newPos = new Vector2()
-        {
-            x = transform.position.x + movement.x * speed * Time.deltaTime,
-            y = transform.position.y + movement.y * speed * Time.deltaTime,
-        };
-
+        Vector2 newPos = (Vector2)transform.position + movement * speed * Time.deltaTime;
         rigidbody.MovePosition(newPos);
     }
 
