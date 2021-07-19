@@ -13,7 +13,9 @@ class Ammo : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        Destroy(gameObject);
+        var hitable = collision.gameObject.GetComponent<Hitable>();
+        if (hitable == null || hitable.Type != ObjectType.Player)
+            Destroy(gameObject);
     }
 
 }

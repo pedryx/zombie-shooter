@@ -35,10 +35,15 @@ public class Gunner : MonoBehaviour
             Vector2 direction = ((Vector2)Input.mousePosition - center).normalized;
 
             var ammoObject = Instantiate(AmmoPrefab);
-            ammoObject.transform.position = (Vector2)transform.position + direction * .6f;
+            ammoObject.transform.position = transform.position;
 
             ammoObject.GetComponent<Ammo>().DeltaMovement = direction * Speed;
             ellapsed = 0;
+
+            Physics2D.IgnoreCollision(
+                ammoObject.GetComponent<Collider2D>(),
+                gameObject.GetComponent<Collider2D>()
+            );
         }
     }
 

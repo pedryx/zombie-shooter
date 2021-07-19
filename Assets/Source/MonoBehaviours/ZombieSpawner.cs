@@ -11,11 +11,14 @@ public class ZombieSpawner : MonoBehaviour
     public const float WaveSizeMultiplier = 1;
 
     private System.Random random;
+    private int zombiesToSpawn;
 
     public GameObject ZombiePrefab;
     public MazeGenerator Maze;
     public GameObject RewardPicker;
     public Gunner Gunner;
+    public float MaxSpeed;
+    public float MinSpeed;
 
     /// <summary>
     /// Current wave number.
@@ -48,6 +51,15 @@ public class ZombieSpawner : MonoBehaviour
         OnZombieCountChange?.Invoke(this, new EventArgs());
     }
 
+    private void FixedUpdate()
+    {
+        if (zombiesToSpawn > 0)
+        {
+            SpawnZombie();
+            zombiesToSpawn--;
+        }
+    }
+
     /// <summary>
     /// Spawn next wave of zombies.
     /// </summary>
@@ -55,9 +67,7 @@ public class ZombieSpawner : MonoBehaviour
     {
         CurrentWave++;
         ReamingZombies = (int)(CurrentWave * WaveSizeMultiplier);
-
-        for (int i = 0; i < ReamingZombies; i++)
-            SpawnZombie();
+        zombiesToSpawn = ReamingZombies;
 
         OnWaveChange?.Invoke(this, new EventArgs());
     }
@@ -68,36 +78,42 @@ public class ZombieSpawner : MonoBehaviour
     private void SpawnZombie()
     {
         Vector2 position = new Vector2();
+        Vector2 tilePos = new Vector2()
+        {
+            x = random.Next(1, (int)Maze.TileSize - 1) + (float)random.NextDouble(),
+            y = random.Next(1, (int)Maze.TileSize - 1) + (float)random.NextDouble(),
+        };
         int tile = random.Next(4);
+
 
         switch (tile)
         {
             case 0:
                 position = new Vector2()
                 {
-                    x = Maze.TileSize / 2 - Maze.TotalWidth / 2,
-                    y = -Maze.TileSize / 2 + Maze.TotalHeight / 2,
+                    x = tilePos.x - Maze.TotalWidth / 2,
+                    y = -tilePos.y + Maze.TotalHeight / 2,
                 };
                 break;
             case 1:
                 position = new Vector2()
                 {
-                    x = Maze.TileSize / 2 - Maze.TotalWidth / 2,
-                    y = Maze.TileSize / 2 - Maze.TotalHeight / 2,
+                    x = tilePos.x - Maze.TotalWidth / 2,
+                    y = tilePos.y - Maze.TotalHeight / 2,
                 };
                 break;
             case 2:
                 position = new Vector2()
                 {
-                    x = -Maze.TileSize / 2 + Maze.TotalWidth / 2,
-                    y = -Maze.TileSize / 2 + Maze.TotalHeight / 2,
+                    x = -tilePos.x + Maze.TotalWidth / 2,
+                    y = -tilePos.y + Maze.TotalHeight / 2,
                 };
                 break;
             case 3:
                 position = new Vector2()
                 {
-                    x = -Maze.TileSize / 2 + Maze.TotalWidth / 2,
-                    y = Maze.TileSize / 2 - Maze.TotalHeight / 2,
+                    x = -tilePos.x + Maze.TotalWidth / 2,
+                    y = tilePos.y - Maze.TotalHeight / 2,
                 };
                 break;
         }
@@ -117,6 +133,7 @@ public class ZombieSpawner : MonoBehaviour
         pathFinder.Target = GameObject.Find("Player").transform;
         pathFinder.Maze = GameObject.Find("Maze").GetComponent<MazeGenerator>();
 
+        zombie.GetComponent<MazePathFinder>().Speed = random.Next((int)MinSpeed, (int)MaxSpeed) + (float)random.NextDouble();
         zombie.GetComponent<Hitable>().OnDead += Zombie_OnDead;
     }
 
