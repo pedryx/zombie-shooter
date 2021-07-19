@@ -1,6 +1,9 @@
-﻿public delegate void HealthChangeEventHandler(object sender, HealthChangeEventArgs e);
+﻿using System;
 
-public class HealthChangeEventArgs
+
+public delegate void HealthChangeEventHandler(object sender, HealthChangeEventArgs e);
+
+public class HealthChangeEventArgs : EventArgs
 {
 
     public int CurrentHealth { get; private set; }

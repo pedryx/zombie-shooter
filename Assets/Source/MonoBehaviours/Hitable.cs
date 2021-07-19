@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -23,6 +24,7 @@ public class Hitable : MonoBehaviour
     /// Number of seconds for which is target immune to damage after geting hit.
     /// </summary>
     public float ProtectionCooldown;
+    public ObjectType Type;
 
     /// <summary>
     /// Current amount of health.
@@ -38,6 +40,11 @@ public class Hitable : MonoBehaviour
     /// Occur when current amount of health change.
     /// </summary>
     public event HealthChangeEventHandler OnHealthChange;
+
+    /// <summary>
+    /// Occur when current object dies.
+    /// </summary>
+    public event EventHandler OnDead;
 
     private void Start()
     {
@@ -73,6 +80,7 @@ public class Hitable : MonoBehaviour
 
         if (CurrentHealth <= 0)
         {
+            OnDead?.Invoke(this, new EventArgs());
             Destroy(gameObject);
             //todo: game exit
             //UnityEngine.Application.Quit();

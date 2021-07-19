@@ -31,7 +31,6 @@ public class MazeGenerator : MonoBehaviour
     private GameObject graph;
 #endif
 
-    public Transform Player;
     public GameObject WallsPrefab;
     public GameObject DebugCirclePrefab;
     /// <summary>
@@ -45,8 +44,9 @@ public class MazeGenerator : MonoBehaviour
     public float TileSize;
     public float WallWidth;
 
-    private float totalWidth;
-    private float totalHeight;
+    public float TotalWidth { get; private set; }
+
+    public float TotalHeight { get; private set; }
 
     public Graph Graph { get; private set; }
 
@@ -61,14 +61,12 @@ public class MazeGenerator : MonoBehaviour
 
     void Start()
     {
-        totalWidth = Width * TileSize;
-        totalHeight = Height * TileSize;
+        TotalWidth = Width * TileSize;
+        TotalHeight = Height * TileSize;
 
         CreateBorder();
         CreateMaze();
         StartCoroutine("CreateGraph");
-
-        Player.position = new Vector3(-totalWidth / 2 + TileSize / 2, totalWidth / 2 - TileSize / 2);
     }
 
     private void Update()
@@ -122,8 +120,8 @@ public class MazeGenerator : MonoBehaviour
     private void CreateWall(int x, int y, Direction dir)
     {
         var wall = Instantiate(WallsPrefab, transform);
-        float posX = -totalWidth / 2 + x * TileSize;
-        float posY = +totalHeight / 2 - y * TileSize;
+        float posX = -TotalWidth / 2 + x * TileSize;
+        float posY = +TotalHeight / 2 - y * TileSize;
 
         switch (dir)
         {
@@ -152,6 +150,7 @@ public class MazeGenerator : MonoBehaviour
 
         graph = new GameObject();
         graph.transform.position = Vector3.zero;
+        graph.name = "Graph";
 
         for (int i = 0; i < Width; i++)
         {
@@ -159,8 +158,8 @@ public class MazeGenerator : MonoBehaviour
             {
                 Vector2 center = new Vector2()
                 {
-                    x = -totalWidth / 2 + i * TileSize + TileSize / 2,
-                    y = -totalHeight / 2 + j * TileSize + TileSize / 2,
+                    x = -TotalWidth / 2 + i * TileSize + TileSize / 2,
+                    y = -TotalHeight / 2 + j * TileSize + TileSize / 2,
                 };
                 CreateNode(center);
             }

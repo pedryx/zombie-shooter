@@ -152,6 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f3a95ec22444f943a49a214268475d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TargetFilter: 1
 --- !u!114 &-5288261824768331247
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -166,3 +167,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MaxHealth: 1
   ProtectionCooldown: 0
+  Type: 2
