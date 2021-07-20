@@ -1,5 +1,4 @@
-#define DEBUG_G
-
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -11,7 +10,6 @@ using UnityEngine;
 /// </summary>
 public class MazeGenerator : MonoBehaviour
 {
-#if DEBUG_G
     /// <summary>
     /// Contains graphical represantion of nodes in graph.
     /// </summary>
@@ -29,7 +27,6 @@ public class MazeGenerator : MonoBehaviour
     /// </summary>
     private bool last = false;
     private GameObject graph;
-#endif
 
     public GameObject WallsPrefab;
     public GameObject DebugCirclePrefab;
@@ -50,13 +47,13 @@ public class MazeGenerator : MonoBehaviour
 
     public Graph Graph { get; private set; }
 
+    public event EventHandler OnMazeGenerated;
+
     public MazeGenerator()
     {
         Graph = new Graph();
-#if DEBUG_G
         circles = new List<GameObject>();
         lines = new List<GameObject>();
-#endif
     }
 
     void Start()
@@ -66,12 +63,11 @@ public class MazeGenerator : MonoBehaviour
 
         CreateBorder();
         CreateMaze();
-        StartCoroutine("CreateGraph");
+        StartCoroutine(nameof(CreateGraph));
     }
 
     private void Update()
     {
-#if DEBUG_G
         bool current = Input.GetKey(KeyCode.F1);
         if (current && !last)
         {
@@ -82,7 +78,6 @@ public class MazeGenerator : MonoBehaviour
                 line.SetActive(showGraph);
         }
         last = current;
-#endif
     }
 
     /// <summary>
@@ -164,6 +159,8 @@ public class MazeGenerator : MonoBehaviour
                 CreateNode(center);
             }
         }
+
+        OnMazeGenerated?.Invoke(this, new EventArgs());
     }
 
     private void CreateNode(Vector2 pos)
@@ -171,7 +168,6 @@ public class MazeGenerator : MonoBehaviour
         var node = new Node(pos);
         Graph.AddNode(node);
 
-#if DEBUG_G
         var circle = Instantiate(DebugCirclePrefab);
         circle.transform.parent = graph.transform;
         circle.transform.position = pos;
@@ -180,15 +176,13 @@ public class MazeGenerator : MonoBehaviour
         foreach (var edge in node.Edges)
         {
             if (edge.Render)
-                CreateEdge(node.Position, edge.Node.Position);
+                CreateEdge(node.Position, edge.Node.Position, edge);
         }
 
         circles.Add(circle);
-#endif
     }
 
-#if DEBUG_G
-    private void CreateEdge(Vector2 start, Vector2 end)
+    private void CreateEdge(Vector2 start, Vector2 end, Edge edge)
     {
         var line = new GameObject();
         line.transform.parent = graph.transform;
@@ -200,11 +194,15 @@ public class MazeGenerator : MonoBehaviour
         renderer.endWidth = .1f;
         renderer.SetPositions(new Vector3[]{ start, end });
         renderer.useWorldSpace = true;
-        renderer.material.color = Color.black;
 
         line.SetActive(false);
         lines.Add(line);
+
+        edge.OnColorChange += (sender, e) =>
+        {
+            renderer.material.color = edge.Color;
+        };
+        edge.Color = Color.black;
     }
-#endif
 
 }

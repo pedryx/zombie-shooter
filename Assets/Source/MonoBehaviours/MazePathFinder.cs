@@ -2,11 +2,13 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
+
 /// <summary>
 /// Represent a path finder in for MazeGenerator component.
 /// </summary>
 public class MazePathFinder : MonoBehaviour
 {
+    private new Rigidbody2D rigidbody;
     /// <summary>
     /// Position of target after last path-finding.
     /// </summary>
@@ -19,14 +21,32 @@ public class MazePathFinder : MonoBehaviour
     /// Index of last visited node in current path.
     /// </summary>
     private int pathPosition;
-    private new Rigidbody2D rigidbody;
+    /// <summary>
+    /// Position toward this entity is currently going.
+    /// </summary>
+    private Vector2 nextPosition;
+    /// <summary>
+    /// The node where was target on last path-finding.
+    /// </summary>
+    private Node lastTargetNode;
 
-    public Transform Target;
+    /// <summary>
+    /// Maze for path-finding.
+    /// </summary>
     public MazeGenerator Maze;
+    /// <summary>
+    /// Target entity to path-find.
+    /// </summary>
+    public MazeEntity Target;
     /// <summary>
     /// Movement speed.
     /// </summary>
     public float Speed;
+
+    /// <summary>
+    /// Determine if entity is able to see the target.
+    /// </summary>
+    public bool TargetInSight { get; private set; }
 
     void Start()
     {
@@ -35,53 +55,50 @@ public class MazePathFinder : MonoBehaviour
 
     void Update()
     {
-        Vector2 currentTargetPos = Target.position;
-
-        if (Vector2.Distance(currentTargetPos, lastTargetPos) > 1)
+        if (PhysicsHelper.CirclesInSight(transform.position, .5f,
+            Target.transform.position, .5f))
         {
-            CreatePath(Maze.Graph, currentTargetPos, transform.position);
-            lastTargetPos = currentTargetPos;
-            pathPosition = 0;
+            nextPosition = Target.transform.position;
+            TargetInSight = true;
+        }
+        else
+        {
+            if (lastTargetNode != Target.CurrentNode || TargetInSight)
+            {
+                path = Maze.Graph.FindPath(gameObject.GetComponent<MazeEntity>().CurrentNode,
+                    Target.CurrentNode);
+                lastTargetPos = Target.transform.position;
+                lastTargetNode = Target.CurrentNode;
+                pathPosition = 1;
+                TargetInSight = false;
+            }
+
+            nextPosition = path[pathPosition].Position;
         }
     }
 
     private void FixedUpdate()
     {
-        if (path == null || pathPosition + 1 >= path.Count)
+        if (path == null || pathPosition >= path.Count)
             return;
 
-        Vector2 newPos;
-        Vector2 direction = (path[pathPosition + 1].Position - (Vector2)transform.position).normalized;
+        Vector2 direction = (nextPosition - (Vector2)transform.position).normalized;
         Vector2 move = direction * Speed * Time.deltaTime;
 
-        if (Vector2.Distance(transform.position, path[pathPosition + 1].Position) <= move.magnitude + .1f)
+        Vector2 newPosition;
+        if (Vector2.Distance(transform.position, nextPosition) <= move.magnitude || move.magnitude == 0)
         {
-            newPos = path[pathPosition + 1].Position;
-            pathPosition++;
+            newPosition = nextPosition;
+            if (!TargetInSight)
+            {
+                pathPosition++;
+                nextPosition = path[pathPosition].Position;
+            }
         }
         else
-        {
-            newPos = (Vector2)transform.position + move;
-        }
+            newPosition = (Vector2)transform.position + move;
 
-        rigidbody.MovePosition(newPos);
-    }
-
-    /// <summary>
-    /// Create new path from pos to target on graph.
-    /// </summary>
-    private void CreatePath(Graph graph, Vector2 target, Vector2 pos)
-    {
-        Node targetNode = new Node(target);
-        Node posNode = new Node(pos);
-
-        graph.AddNode(targetNode);
-        graph.AddNode(posNode);
-
-        path = graph.FindPath(posNode, targetNode);
-
-        graph.RemoveNode(targetNode);
-        graph.RemoveNode(posNode);
+        rigidbody.MovePosition(newPosition);
     }
 
 }

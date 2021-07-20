@@ -8,8 +8,6 @@ using UnityEngine;
 /// </summary>
 public class ZombieSpawner : MonoBehaviour
 {
-    public const float WaveSizeMultiplier = 1;
-
     private System.Random random;
     private int zombiesToSpawn;
 
@@ -19,6 +17,8 @@ public class ZombieSpawner : MonoBehaviour
     public Gunner Gunner;
     public float MaxSpeed;
     public float MinSpeed;
+    public float WaveMultiplier;
+    public int StartWave;
 
     /// <summary>
     /// Current wave number.
@@ -47,6 +47,7 @@ public class ZombieSpawner : MonoBehaviour
 
     private void Start()
     {
+        CurrentWave = StartWave - 1;
         SpawnNextWave();
         OnZombieCountChange?.Invoke(this, new EventArgs());
     }
@@ -66,7 +67,7 @@ public class ZombieSpawner : MonoBehaviour
     private void SpawnNextWave()
     {
         CurrentWave++;
-        ReamingZombies = (int)(CurrentWave * WaveSizeMultiplier);
+        ReamingZombies = (int)(CurrentWave * WaveMultiplier);
         zombiesToSpawn = ReamingZombies;
 
         OnWaveChange?.Invoke(this, new EventArgs());
@@ -130,8 +131,12 @@ public class ZombieSpawner : MonoBehaviour
         zombie.transform.position = position;
 
         var pathFinder = zombie.GetComponent<MazePathFinder>();
-        pathFinder.Target = GameObject.Find("Player").transform;
+        pathFinder.Target = GameObject.Find("Player").GetComponent<MazeEntity>();
         pathFinder.Maze = GameObject.Find("Maze").GetComponent<MazeGenerator>();
+
+        var mazeEntity = zombie.GetComponent<MazeEntity>();
+        mazeEntity.Maze = pathFinder.Maze;
+        mazeEntity.Init();
 
         zombie.GetComponent<MazePathFinder>().Speed = random.Next((int)MinSpeed, (int)MaxSpeed) + (float)random.NextDouble();
         zombie.GetComponent<Hitable>().OnDead += Zombie_OnDead;

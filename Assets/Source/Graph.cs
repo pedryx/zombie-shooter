@@ -6,7 +6,7 @@ using UnityEngine;
 
 // https://github.com/BlueRaja/High-Speed-Priority-Queue-for-C-Sharp
 using Priority_Queue;
-
+using System;
 
 public class Graph : IEnumerable<Node>
 {
@@ -26,8 +26,7 @@ public class Graph : IEnumerable<Node>
             if (other == node)
                 continue;
 
-            var hit = Physics2D.Linecast(node.Position, other.Position, LayerMask.GetMask("Walls"));
-            if (hit.collider == null)
+            if (PhysicsHelper.CirclesInSight(node.Position, .5f, other.Position, .5f))
             {
                 float distance = Vector2.Distance(node.Position, other.Position);
 
@@ -104,6 +103,42 @@ public class Graph : IEnumerable<Node>
         return path;
     }
 
+    public Node GetNearest(Vector2 position)
+    {
+        Node minNode = nodes[0];
+        float minDistance = Vector2.Distance(position, minNode.Position);
+
+        for (int i = 1; i < nodes.Count; i++)
+        {
+            float distance = Vector2.Distance(position, nodes[i].Position);
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                minNode = nodes[i];
+            }
+        }
+
+        return minNode;
+    }
+
+    public Node GetNearest(Node node, Vector2 position)
+    {
+        Node minNode = node;
+        float minDistance = Vector2.Distance(position, node.Position);
+
+        foreach (var edge in node.Edges)
+        {
+            float distance = Vector2.Distance(position, edge.Node.Position);
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                minNode = edge.Node;
+            }
+        }
+
+        return minNode;
+    }
+
     public IEnumerator<Node> GetEnumerator()
         => nodes.GetEnumerator();
 
@@ -137,10 +172,25 @@ public class Edge
     /// </summary>
     public bool Render { get; private set; }
 
+    private Color color;
+
+    public Color Color
+    {
+        get => color;
+        set 
+        {
+            color = value;
+            OnColorChange?.Invoke(this, new EventArgs());
+        }
+    }
+
+    public event EventHandler OnColorChange;
+
     public Edge(Node node, float value, bool render)
     {
         Node = node;
         Value = value;
         Render = render;
     }
+
 }

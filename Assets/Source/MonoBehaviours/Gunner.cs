@@ -21,9 +21,20 @@ public class Gunner : MonoBehaviour
     /// </summary>
     public GameObject AmmoPrefab;
     /// <summary>
+    /// (Optional parameter)
+    /// If not null then speed of fired bullets will be inceesing each time player pick up a move speed upgrade.
+    /// </summary>
+    public RewardPicker rewardPicker;
+    /// <summary>
     /// Speed of bullets.
     /// </summary>
     public float Speed;
+
+    private void Start()
+    {
+        if (rewardPicker != null)
+            rewardPicker.OnSpeedPicked += RewardPicker_OnSpeedPicked;
+    }
 
     private void Update()
     {
@@ -45,6 +56,10 @@ public class Gunner : MonoBehaviour
                 gameObject.GetComponent<Collider2D>()
             );
         }
+    }
+    private void RewardPicker_OnSpeedPicked(object sender, RewardPickedEventArgs e)
+    {
+        Speed += e.IncAmount;
     }
 
 }

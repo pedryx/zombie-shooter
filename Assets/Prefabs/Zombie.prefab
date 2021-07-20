@@ -15,7 +15,8 @@ GameObject:
   - component: {fileID: -2995841864757877003}
   - component: {fileID: -8650190270198195519}
   - component: {fileID: -5288261824768331247}
-  m_Layer: 0
+  - component: {fileID: 98244229132444834}
+  m_Layer: 7
   m_Name: Zombie
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -116,8 +117,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f69a26ee6dd70b44b979af57c6103f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Target: {fileID: 0}
   Maze: {fileID: 0}
+  Target: {fileID: 0}
   Speed: 5
 --- !u!50 &-2995841864757877003
 Rigidbody2D:
@@ -127,7 +128,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2915374153815751548}
-  m_BodyType: 1
+  m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -168,3 +169,16 @@ MonoBehaviour:
   MaxHealth: 1
   ProtectionCooldown: 0
   Type: 2
+--- !u!114 &98244229132444834
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2915374153815751548}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00dd68ba211f2c04ba1e0a1330867fa1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Maze: {fileID: 0}

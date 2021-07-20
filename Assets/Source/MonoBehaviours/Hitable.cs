@@ -82,8 +82,6 @@ public class Hitable : MonoBehaviour
         {
             OnDead?.Invoke(this, new EventArgs());
             Destroy(gameObject);
-            //todo: game exit
-            //UnityEngine.Application.Quit();
         }
         else
         {

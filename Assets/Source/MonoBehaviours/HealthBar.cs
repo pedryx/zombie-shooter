@@ -30,10 +30,14 @@ class HealthBar : MonoBehaviour
 
         var rectTransform = hearth.GetComponent<RectTransform>();
         rectTransform.SetParent(transform, false);
+
+        float rectWidth = rectTransform.rect.width * rectTransform.localScale.x;
+        float rectHeight = rectTransform.rect.height * rectTransform.localScale.y;
+        float spacing = -15;
         rectTransform.position = new Vector2()
         {
-            x = rectTransform.rect.width / 2 + 10 + (rectTransform.rect.width + 10) * index,
-            y = Screen.height - rectTransform.rect.height + 30,
+            x = 25 + rectWidth / 2 + spacing + (rectTransform.rect.width + spacing) * index,
+            y = Screen.height - rectHeight + 20,
         };
 
         hearthObjects.Add(hearth);
